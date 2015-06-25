@@ -1,3 +1,12 @@
+--[[
+    Copyright (c) 2015-present, Facebook, Inc.
+    All rights reserved.
+
+    This source code is licensed under the BSD-style license found in the
+    LICENSE file in the root directory of this source tree. An additional grant
+    of patent rights can be found in the PATENTS file in the same directory.
+]]--
+
 require 'torch'
 require 'cunn'
 require 'nngraph'
@@ -66,7 +75,7 @@ local input_sz = opt.geometry[1] * opt.geometry[2] * opt.geometry[3]
 if opt.network == '' then
   ----------------------------------------------------------------------
   -- define D network to train
-  local nplanes = opt.hidden_D 
+  local nplanes = opt.hidden_D
   x_d = nn.Identity()()
   x_c1 = nn.Identity()()
   x_c2 = nn.Identity()()
@@ -180,7 +189,7 @@ sgdState_G = {
 
 -- Get examples to plot
 function getSamples(dataset, N, perclass)
-  local N = N or 8 
+  local N = N or 8
   local perclass = perclass or 10
   local noise_inputs = torch.Tensor(N, opt.noiseDim[1], opt.noiseDim[2], opt.noiseDim[3])
   local cond_inputs1 = torch.Tensor(N, opt.condDim1)
@@ -188,7 +197,7 @@ function getSamples(dataset, N, perclass)
   local gt_diff = torch.Tensor(N, opt.geometry[1], opt.geometry[2], opt.geometry[3])
   local gt = torch.Tensor(N, 3, opt.fineSize, opt.fineSize)
 
-  -- Generate samples 
+  -- Generate samples
   noise_inputs:uniform(-1, 1)
   local class = 1
   local classes = {}
@@ -219,8 +228,8 @@ function getSamples(dataset, N, perclass)
     local pred = torch.add(cond_inputs2[i]:float(), samples[i]:float())
     to_plot[#to_plot+1] = gt[i]:float()
     to_plot[#to_plot+1] = pred
-    to_plot[#to_plot+1] = cond_inputs2[i]:float() 
-    to_plot[#to_plot+1] = samples[i]:float() 
+    to_plot[#to_plot+1] = cond_inputs2[i]:float()
+    to_plot[#to_plot+1] = samples[i]:float()
   end
 
   return to_plot
@@ -242,7 +251,7 @@ while true do
 
   -- plot errors
   if opt.plot  and epoch and epoch % 1 == 0 then
-    local to_plot = getSamples(valData, 16, 2) 
+    local to_plot = getSamples(valData, 16, 2)
     torch.setdefaulttensortype('torch.FloatTensor')
 
     trainLogger:style{['% mean class accuracy of D (train set)'] = '-'}

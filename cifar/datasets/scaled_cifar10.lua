@@ -1,3 +1,12 @@
+--[[
+    Copyright (c) 2015-present, Facebook, Inc.
+    All rights reserved.
+
+    This source code is licensed under the BSD-style license found in the
+    LICENSE file in the root directory of this source tree. An additional grant
+    of patent rights can be found in the PATENTS file in the same directory.
+]]--
+
 require 'torch'
 require 'image'
 require 'paths'
@@ -45,7 +54,7 @@ function cifar.loadDataset(isTrain, start, stop)
   labels = labels[{ {start, stop} }]
   labels:add(1) -- becasue indexing is 1-based
   local N = stop - start + 1
-  print('<cifar10> loaded ' .. N .. ' examples') 
+  print('<cifar10> loaded ' .. N .. ' examples')
 
   local dataset = {}
   dataset.data = data
