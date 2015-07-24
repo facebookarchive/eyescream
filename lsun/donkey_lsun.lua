@@ -25,10 +25,9 @@ for k,v in pairs(classes) do
 end
 
 -- Check for existence of opt.data
-opt.data = os.getenv('HOME') .. '/local/lsun'
+opt.data = os.getenv('DATA_ROOT') or os.getenv('HOME') .. '/local/lsun'
 if not os.execute('cd ' .. opt.data) then
-    print('no local data, falling back to gfsai')
-    opt.data = '/gfsai/ai-group/datasets/lsun'
+    error(("could not chdir to '%s'"):format(opt.data))
 end
 
 local meanstdCache = 'meanstdCache_'

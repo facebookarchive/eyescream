@@ -13,13 +13,12 @@ require 'optim'
 require 'image'
 require 'paths'
 local pl=require 'pl'
-bistro = require 'bistro'
 
 ----------------------------------------------------------------------
 -- parse command-line options
 opt = lapp[[
   --dataset          (default "imagenet")      imagenet | lsun
-  --model            (default "large")      large | emily | autogen
+  --model            (default "large")      large | small | autogen
   -s,--save          (default "imgslogs")      subdirectory to save logs
   --saveFreq         (default 10)          save every saveFreq epochs
   -n,--network       (default "")          reload pretrained network
@@ -176,7 +175,7 @@ while epoch < opt.nEpochs do
    test()
    torch.save(opt.save .. '/' .. 'model_' .. epoch .. '.t7',
               {D = sanitize(model_D), G = sanitize(model_G)})
-   bistro.log(merge_table({epoch = opt.epoch,
+   print(merge_table({epoch = opt.epoch,
                            tr_acc0 = tr_acc0,
                            tr_acc1 = tr_acc1,
                            ts_acc0 = ts_acc0,

@@ -28,7 +28,7 @@ if opt.network ~= '' then
   print(model_D)
   print('Generator network:')
   print(model_G)
-elseif opt.model == 'cifar' then
+elseif opt.model == 'small' then
    local nplanes = 64
    model_D = nn.Sequential()
    model_D:add(nn.CAddTable())
@@ -50,6 +50,7 @@ elseif opt.model == 'cifar' then
    model_G:add(cudnn.SpatialConvolutionUpsample(nplanes, 3, 5, 5, 1))
    model_G:add(nn.View(opt.geometry[1], opt.geometry[2], opt.geometry[3]))
 elseif opt.model == 'large' then
+   require 'fbcunn'
    print('Generator network (good):')
    desc_G = '___JT22___C_4_64_g1_7x7___R__BN___C_64_368_g4_7x7___R__BN___SDrop 0.5___C_368_128_g4_7x7___R__BN___P_LPOut_2___C_64_224_g2_5x5___R__BN___SDrop 0.5___C_224_3_g1_7x7__BNA'
    model_G = nn.Sequential()

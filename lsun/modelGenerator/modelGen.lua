@@ -8,8 +8,7 @@
 ]]--
 
 require 'cudnn'
-paths.dofile('layers/cudnnSpatialConvolutionUpsample.lua')
-require 'fbcunn'
+paths.dofile('../layers/cudnnSpatialConvolutionUpsample.lua')
 
 -- square kernels.
 -- pool size == stride
@@ -61,6 +60,7 @@ function generateModelG(minLayers, maxLayers,
             model:add(nn.VolumetricMaxPooling(factor, 1, 1))
          elseif t == 2 then
             desc = desc .. '___P_' .. 'LPOut_' .. factor
+            require 'fbcunn'
             model:add(nn.FeatureLPPooling(2,2,2,true))
          end
       end
