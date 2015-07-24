@@ -7,7 +7,7 @@ require 'datasets.coarse_to_fine_cifar10'
 require 'pl'
 require 'paths'
 image_utils = require 'utils.image'
-ok, disp = require 'display'
+ok, disp = pcall(require, 'display')
 if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.conditional_adversarial'
 require 'layers.SpatialConvolutionUpsample'
@@ -89,7 +89,7 @@ if opt.network == '' then
   model_G:add(nn.ReLU())
   model_G:add(nn.SpatialConvolutionUpsample(nplanes, 3, 5, 5, 1)) -- 3 color channels + conditional
   model_G:add(nn.View(opt.geometry[1], opt.geometry[2], opt.geometry[3]))
- 
+
 else
   print('<trainer> reloading previously trained network: ' .. opt.network)
   tmp = torch.load(opt.network)
@@ -175,13 +175,13 @@ sgdState_G = {
 
 -- Get examples to plot
 function getSamples(dataset, N)
-  local N = N or 8 
+  local N = N or 8
   local noise_inputs = torch.Tensor(N, opt.noiseDim[1], opt.noiseDim[2], opt.noiseDim[3])
   local cond_inputs = torch.Tensor(N, opt.condDim[1], opt.condDim[2], opt.condDim[3])
   local gt_diff = torch.Tensor(N, opt.geometry[1], opt.geometry[2], opt.geometry[3])
   local gt = torch.Tensor(N, 3, opt.fineSize, opt.fineSize)
 
-  -- Generate samples 
+  -- Generate samples
   noise_inputs:uniform(-1, 1)
   for n = 1,N do
     local rand = math.random(dataset:size())
@@ -198,8 +198,8 @@ function getSamples(dataset, N)
     local pred = torch.add(cond_inputs[i]:float(), samples[i]:float())
     to_plot[#to_plot+1] = gt[i]:float()
     to_plot[#to_plot+1] = pred
-    to_plot[#to_plot+1] = cond_inputs[i]:float() 
-    to_plot[#to_plot+1] = samples[i]:float() 
+    to_plot[#to_plot+1] = cond_inputs[i]:float()
+    to_plot[#to_plot+1] = samples[i]:float()
   end
   return to_plot
 end
@@ -220,7 +220,7 @@ while true do
 
   -- plot errors
   if opt.plot  and epoch and epoch % 1 == 0 then
-    local to_plot = getSamples(valData, 16) 
+    local to_plot = getSamples(valData, 16)
     torch.setdefaulttensortype('torch.FloatTensor')
 
     trainLogger:style{['% mean class accuracy of D (train set)'] = '-'}

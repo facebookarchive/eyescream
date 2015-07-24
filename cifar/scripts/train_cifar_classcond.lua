@@ -7,7 +7,7 @@ require 'datasets.scaled_cifar10'
 require 'pl'
 require 'paths'
 image_utils = require 'utils.image'
-ok, disp = require 'display'
+ok, disp = pcall(require, 'display')
 if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.conditional_adversarial'
 debugger = require('fb.debugger')
@@ -68,7 +68,7 @@ local input_sz = opt.geometry[1] * opt.geometry[2] * opt.geometry[3]
 if opt.network == '' then
   ----------------------------------------------------------------------
   -- define D network to train
-  local numhid = opt.hidden_D 
+  local numhid = opt.hidden_D
   x_I = nn.Identity()()
   x_C = nn.Identity()()
   c1 = nn.JoinTable(2, 2)({nn.Reshape(input_sz)(x_I), x_C})
@@ -116,7 +116,7 @@ for i=1,#model_D.forwardnodes do
   end
 end
 print('\nNumber of free parameters in D: ' .. nparams)
- 
+
 local nparams = 0
 for i=1,#model_G.modules do
   if model_G.modules[i].weight ~= nil then
@@ -170,18 +170,18 @@ sgdState_G = {
 -- Get examples to plot
 function getSamples(dataset, N, numperclass)
   local numperclass = numperclass or 10
-  local N = N or 8 
+  local N = N or 8
   local noise_inputs = torch.Tensor(N, opt.noiseDim)
   local cond_inputs = torch.zeros(N, opt.condDim)
 
-  -- Generate samples 
+  -- Generate samples
   noise_inputs:uniform(-1, 1)
   local class = math.random(10)
   local classes = {}
   for n = 1,N do
-    cond_inputs[n][class] = 1 
+    cond_inputs[n][class] = 1
     classes[n] = cifar_classes[class]
-    if n % numperclass ==0 then class = math.random(10) end 
+    if n % numperclass ==0 then class = math.random(10) end
   end
   local samples = model_G:forward({noise_inputs, cond_inputs})
 
@@ -206,7 +206,7 @@ while true do
 
   -- plot errors
   if opt.plot  and epoch and epoch % 1 == 0 then
-    local to_plot, labels = getSamples(valData, 100, 10) 
+    local to_plot, labels = getSamples(valData, 100, 10)
     torch.setdefaulttensortype('torch.FloatTensor')
 
     trainLogger:style{['% mean class accuracy of D (train set)'] = '-'}

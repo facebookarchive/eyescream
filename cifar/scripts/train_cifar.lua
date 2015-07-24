@@ -7,10 +7,9 @@ require 'datasets.scaled_cifar10'
 require 'pl'
 require 'paths'
 image_utils = require 'utils.image'
-ok, disp = require 'display'
+ok, disp = pcall(require, 'display')
 if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.adversarial'
-debugger = require('fb.debugger')
 
 
 ----------------------------------------------------------------------
@@ -67,7 +66,7 @@ local input_sz = opt.geometry[1] * opt.geometry[2] * opt.geometry[3]
 if opt.network == '' then
   ----------------------------------------------------------------------
   -- define D network to train
-  local numhid = opt.hidden_D 
+  local numhid = opt.hidden_D
   model_D = nn.Sequential()
   model_D:add(nn.Reshape(input_sz))
   model_D:add(nn.Linear(input_sz, numhid))
@@ -172,10 +171,10 @@ sgdState_G = {
 -- Get examples to plot
 function getSamples(dataset, N)
   local numperclass = numperclass or 10
-  local N = N or 8 
+  local N = N or 8
   local noise_inputs = torch.Tensor(N, opt.noiseDim)
 
-  -- Generate samples 
+  -- Generate samples
   noise_inputs:uniform(-1, 1)
   local samples = model_G:forward(noise_inputs)
 
