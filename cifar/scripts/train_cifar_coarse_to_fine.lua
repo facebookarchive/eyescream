@@ -11,7 +11,6 @@ ok, disp = pcall(require, 'display')
 if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.conditional_adversarial'
 require 'layers.SpatialConvolutionUpsample'
-debugger = require 'fb.debugger'
 
 
 ----------------------------------------------------------------------

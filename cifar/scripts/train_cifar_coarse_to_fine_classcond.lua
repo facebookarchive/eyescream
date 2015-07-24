@@ -10,7 +10,6 @@ image_utils = require 'utils.image'
 ok, disp = pcall(require, 'display')
 if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.double_conditional_adversarial'
-debugger = require('fb.debugger')
 require 'layers.SpatialConvolutionUpsample'
 
 
