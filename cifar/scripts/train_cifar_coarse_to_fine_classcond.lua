@@ -1,12 +1,3 @@
---[[
-    Copyright (c) 2015-present, Facebook, Inc.
-    All rights reserved.
-
-    This source code is licensed under the BSD-style license found in the
-    LICENSE file in the root directory of this source tree. An additional grant
-    of patent rights can be found in the PATENTS file in the same directory.
-]]--
-
 require 'torch'
 require 'cunn'
 require 'nngraph'
@@ -16,7 +7,8 @@ require 'datasets.coarse_to_fine_cifar10'
 require 'pl'
 require 'paths'
 image_utils = require 'utils.image'
-disp = require 'display'
+ok, disp = require 'display'
+if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.double_conditional_adversarial'
 debugger = require('fb.debugger')
 require 'layers.SpatialConvolutionUpsample'
@@ -29,7 +21,7 @@ opt = lapp[[
   --saveFreq         (default 2)           save every saveFreq epochs
   -n,--network       (default "")          reload pretrained network
   -p,--plot                                plot while training
-  -r,--learningRate  (default 0.01)        learning rate
+  -r,--learningRate  (default 0.02)        learning rate
   -b,--batchSize     (default 128)         batch size
   -m,--momentum      (default 0)           momentum
   --coefL1           (default 0)           L1 penalty on the weights
@@ -39,8 +31,8 @@ opt = lapp[[
   -d,--noiseDim      (default 100)         dimensionality of noise vector
   --K                (default 1)           number of iterations to optimize D for
   -w, --window       (default 3)           windsow id of sample image
-  --hidden_G         (default 128)         number of channels in hidden layers of G
-  --hidden_D         (default 128)         number of channels in hidden layers of D
+  --hidden_G         (default 64)         number of channels in hidden layers of G
+  --hidden_D         (default 64)         number of channels in hidden layers of D
   --coarseSize       (default 16)          coarse scale
   --fineSize         (default 32)          fine scale
 ]]
@@ -75,7 +67,7 @@ local input_sz = opt.geometry[1] * opt.geometry[2] * opt.geometry[3]
 if opt.network == '' then
   ----------------------------------------------------------------------
   -- define D network to train
-  local nplanes = opt.hidden_D
+  local nplanes = opt.hidden_D 
   x_d = nn.Identity()()
   x_c1 = nn.Identity()()
   x_c2 = nn.Identity()()
@@ -189,7 +181,7 @@ sgdState_G = {
 
 -- Get examples to plot
 function getSamples(dataset, N, perclass)
-  local N = N or 8
+  local N = N or 8 
   local perclass = perclass or 10
   local noise_inputs = torch.Tensor(N, opt.noiseDim[1], opt.noiseDim[2], opt.noiseDim[3])
   local cond_inputs1 = torch.Tensor(N, opt.condDim1)
@@ -197,7 +189,7 @@ function getSamples(dataset, N, perclass)
   local gt_diff = torch.Tensor(N, opt.geometry[1], opt.geometry[2], opt.geometry[3])
   local gt = torch.Tensor(N, 3, opt.fineSize, opt.fineSize)
 
-  -- Generate samples
+  -- Generate samples 
   noise_inputs:uniform(-1, 1)
   local class = 1
   local classes = {}
@@ -228,21 +220,18 @@ function getSamples(dataset, N, perclass)
     local pred = torch.add(cond_inputs2[i]:float(), samples[i]:float())
     to_plot[#to_plot+1] = gt[i]:float()
     to_plot[#to_plot+1] = pred
-    to_plot[#to_plot+1] = cond_inputs2[i]:float()
-    to_plot[#to_plot+1] = samples[i]:float()
+    to_plot[#to_plot+1] = cond_inputs2[i]:float() 
+    to_plot[#to_plot+1] = samples[i]:float() 
   end
 
   return to_plot
 end
 
-local esize = opt.batchSize*200
 -- training loop
 while true do
   -- train/test
   adversarial.train(trainData)
   adversarial.test(valData)
-
-  logpx = adversarial.approxParzen(valData, 500, opt.batchSize)
 
   sgdState_D.momentum = math.min(sgdState_D.momentum + 0.0008, 0.7)
   sgdState_D.learningRate = math.max(sgdState_D.learningRate / 1.00004, 0.000001)
@@ -251,7 +240,7 @@ while true do
 
   -- plot errors
   if opt.plot  and epoch and epoch % 1 == 0 then
-    local to_plot = getSamples(valData, 16, 2)
+    local to_plot = getSamples(valData, 16, 2) 
     torch.setdefaulttensortype('torch.FloatTensor')
 
     trainLogger:style{['% mean class accuracy of D (train set)'] = '-'}

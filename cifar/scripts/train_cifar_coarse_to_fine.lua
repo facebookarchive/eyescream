@@ -1,12 +1,3 @@
---[[
-    Copyright (c) 2015-present, Facebook, Inc.
-    All rights reserved.
-
-    This source code is licensed under the BSD-style license found in the
-    LICENSE file in the root directory of this source tree. An additional grant
-    of patent rights can be found in the PATENTS file in the same directory.
-]]--
-
 require 'torch'
 require 'nngraph'
 require 'cunn'
@@ -16,9 +7,11 @@ require 'datasets.coarse_to_fine_cifar10'
 require 'pl'
 require 'paths'
 image_utils = require 'utils.image'
-disp = require 'display'
+ok, disp = require 'display'
+if not ok then print('display not found. unable to plot') end
 adversarial = require 'train.conditional_adversarial'
 require 'layers.SpatialConvolutionUpsample'
+debugger = require 'fb.debugger'
 
 
 ----------------------------------------------------------------------
@@ -28,9 +21,9 @@ opt = lapp[[
   --saveFreq         (default 5)           save every saveFreq epochs
   -n,--network       (default "")          reload pretrained network
   -p,--plot                                plot while training
-  -r,--learningRate  (default 0.01)        learning rate
+  -r,--learningRate  (default 0.02)        learning rate
   -b,--batchSize     (default 128)         batch size
-  -m,--momentum      (default 0)           momentum
+  -m,--momentum      (default 0.5)           momentum
   --coefL1           (default 0)           L1 penalty on the weights
   --coefL2           (default 0)           L2 penalty on the weights
   -t,--threads       (default 4)           number of threads
@@ -38,8 +31,8 @@ opt = lapp[[
   -d,--noiseDim      (default 100)         dimensionality of noise vector
   --K                (default 1)           number of iterations to optimize D for
   -w, --window       (default 3)           windsow id of sample image
-  --hidden_G         (default 128)         number of channels in hidden layers of G
-  --hidden_D         (default 128)         number of channels in hidden layers of D
+  --hidden_G         (default 64)         number of channels in hidden layers of G
+  --hidden_D         (default 64)         number of channels in hidden layers of D
   --coarseSize       (default 16)          coarse scale
   --fineSize         (default 32)          fine scale
 ]]
@@ -96,7 +89,7 @@ if opt.network == '' then
   model_G:add(nn.ReLU())
   model_G:add(nn.SpatialConvolutionUpsample(nplanes, 3, 5, 5, 1)) -- 3 color channels + conditional
   model_G:add(nn.View(opt.geometry[1], opt.geometry[2], opt.geometry[3]))
-
+ 
 else
   print('<trainer> reloading previously trained network: ' .. opt.network)
   tmp = torch.load(opt.network)
@@ -182,13 +175,13 @@ sgdState_G = {
 
 -- Get examples to plot
 function getSamples(dataset, N)
-  local N = N or 8
+  local N = N or 8 
   local noise_inputs = torch.Tensor(N, opt.noiseDim[1], opt.noiseDim[2], opt.noiseDim[3])
   local cond_inputs = torch.Tensor(N, opt.condDim[1], opt.condDim[2], opt.condDim[3])
   local gt_diff = torch.Tensor(N, opt.geometry[1], opt.geometry[2], opt.geometry[3])
   local gt = torch.Tensor(N, 3, opt.fineSize, opt.fineSize)
 
-  -- Generate samples
+  -- Generate samples 
   noise_inputs:uniform(-1, 1)
   for n = 1,N do
     local rand = math.random(dataset:size())
@@ -205,8 +198,8 @@ function getSamples(dataset, N)
     local pred = torch.add(cond_inputs[i]:float(), samples[i]:float())
     to_plot[#to_plot+1] = gt[i]:float()
     to_plot[#to_plot+1] = pred
-    to_plot[#to_plot+1] = cond_inputs[i]:float()
-    to_plot[#to_plot+1] = samples[i]:float()
+    to_plot[#to_plot+1] = cond_inputs[i]:float() 
+    to_plot[#to_plot+1] = samples[i]:float() 
   end
   return to_plot
 end
@@ -227,7 +220,7 @@ while true do
 
   -- plot errors
   if opt.plot  and epoch and epoch % 1 == 0 then
-    local to_plot = getSamples(valData, 16)
+    local to_plot = getSamples(valData, 16) 
     torch.setdefaulttensortype('torch.FloatTensor')
 
     trainLogger:style{['% mean class accuracy of D (train set)'] = '-'}
