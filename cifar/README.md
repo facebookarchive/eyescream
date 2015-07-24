@@ -11,7 +11,7 @@ th scripts/train_cifar.lua --scale 32
 
 Training a coarse-to-fine GAN on 16 -> 32 images:
 ```
-th  scripts/train_cifar_coarse_to_fine.lua --coarseScale 16 --fineScale 32
+th  scripts/train_cifar_coarse_to_fine.lua --coarseSize 16 --fineSize 32
 ```
 
 
@@ -22,7 +22,7 @@ th scripts/train_cifar_classcond.lua --scale 32
 
 Training a class conditional coarse-to-fine GAN on 16 -> 32 images:
 ```
-th scripts/train_cifar_coarse_to_fine_classcond.lua --coarseScale 16 --fineScale 32
+th scripts/train_cifar_coarse_to_fine_classcond.lua --coarseSize 16 --fineSize 32
 ```
 
 The default training hyperparameters should suffice for all cases.
