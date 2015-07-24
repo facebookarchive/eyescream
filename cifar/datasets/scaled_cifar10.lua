@@ -4,7 +4,7 @@ require 'paths'
 
 cifar = {}
 
-cifar.path_dataset = '/your/path/to/cifar10/cifar-10-batches-t7/'
+cifar.path_dataset = 'cifar-10-batches-t7/'
 cifar.scale = 32
 
 function cifar.setScale(scale)
@@ -45,7 +45,7 @@ function cifar.loadDataset(isTrain, start, stop)
   labels = labels[{ {start, stop} }]
   labels:add(1) -- becasue indexing is 1-based
   local N = stop - start + 1
-  print('<cifar10> loaded ' .. N .. ' examples') 
+  print('<cifar10> loaded ' .. N .. ' examples')
 
   local dataset = {}
   dataset.data = data

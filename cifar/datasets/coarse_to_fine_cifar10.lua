@@ -5,9 +5,9 @@ image_utils = require 'utils.image'
 
 cifar = {}
 
-cifar.path_dataset = '/your/path/to/cifar10/cifar-10-batches-t7/'
+cifar.path_dataset = 'cifar-10-batches-t7/'
 
-cifar.coarseSize = 16 
+cifar.coarseSize = 16
 cifar.fineSize = 32
 
 function cifar.init(fineSize, coarseSize)
@@ -40,7 +40,7 @@ function cifar.loadDataset(isTrain, start, stop, augment, crop)
     data = subset.data:t():reshape(10000, 3, 32, 32):type('torch.FloatTensor')
     labels = subset.labels:t():type(defaultType)
   end
-   
+
   local start = start or 1
   local stop = stop or data:size(1)
 
@@ -49,7 +49,7 @@ function cifar.loadDataset(isTrain, start, stop, augment, crop)
   labels = labels[{ {start, stop} }]
   labels:add(1) -- becasue indexing is 1-based
   local N = stop - start + 1
-  print('<cifar10> loaded ' .. N .. ' examples') 
+  print('<cifar10> loaded ' .. N .. ' examples')
 
   local dataset = {}
   dataset.data = data -- on cpu
