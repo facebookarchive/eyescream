@@ -4,7 +4,7 @@ require 'image'
 local img = {}
 
 function img.normalize(data, mean_, std_)
-  local mean = mean or data:mean(1)
+  local mean = mean_ or data:mean(1)
   local std = std_ or data:std(1, true)
   local eps = 1e-7
   for i=1,data:size(1) do
