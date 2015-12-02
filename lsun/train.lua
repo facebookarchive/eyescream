@@ -13,6 +13,8 @@ require 'paths'
 
 local adversarial = {}
 
+local unpack = unpack and unpack or table.unpack
+
 -- reusable buffers
 local targets      = torch.CudaTensor(opt.batchSize)
 local inputs       = torch.CudaTensor(opt.batchSize, unpack(opt.geometry))               -- original full-res image - low res image
@@ -95,6 +97,7 @@ function adversarial.train(inputs_all, inputs_all2)
    if opt.scratch == 1 then -- no scale conditioning if training from scratch
       inps = noise_inputs
    end
+
    local hallucinations = model_G:forward(inps)
    assert(hallucinations:size(1) == opt.batchSize)
    assert(hallucinations:size(2) == 3)

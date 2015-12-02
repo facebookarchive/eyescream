@@ -33,9 +33,9 @@ opt = lapp[[
   --epochSize        (default 5000)        number of samples per epoch
   --nEpochs          (default 25)
   --coarseSize       (default 16)
-  --scaleUp          (default 2)          How much to upscale coarseSize
+  --scaleUp          (default 4)          How much to upscale coarseSize
   --archgen          (default 1)
-  --scratch          (default 0)
+  --scratch          (default 1)
   --forceDonkeys     (default 0)
 ]]
 
@@ -49,7 +49,7 @@ torch.setdefaulttensortype('torch.FloatTensor')
 
 opt.fineSize = opt.coarseSize * opt.scaleUp
 opt.loadSize = math.ceil(opt.coarseSize * (3 * opt.scaleUp / 2))
-opt.noiseDim = {1, opt.fineSize, opt.fineSize}
+opt.noiseDim = {100, 1, 1}
 classes = {'0','1'}
 opt.geometry = {3, opt.fineSize, opt.fineSize}
 opt.condDim = {3, opt.fineSize, opt.fineSize}
