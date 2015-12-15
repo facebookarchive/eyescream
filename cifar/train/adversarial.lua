@@ -84,8 +84,8 @@ function adversarial.train(dataset, N)
       if opt.coefL1 ~= 0 or opt.coefL2 ~= 0 then
         local norm,sign= torch.norm,torch.sign
         -- Loss:
-        f = f + opt.coefL1 * norm(parameters_D,1)
-        f = f + opt.coefL2 * norm(parameters_D,2)^2/2
+        f = f + opt.coefL1 * norm(parameters_G,1)
+        f = f + opt.coefL2 * norm(parameters_G,2)^2/2
         -- Gradients:
         gradParameters_G:add( sign(parameters_G):mul(opt.coefL1) + parameters_G:clone():mul(opt.coefL2) )
       end
